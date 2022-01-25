@@ -14,9 +14,12 @@ public class MainManager : MonoBehaviour
     public GameObject GameOverText;
     
     private bool m_Started = false;
-    private int m_Points;
+    public int m_Points;
     
     private bool m_GameOver = false;
+
+    private DataManager dataManager;
+    public Text RecordText;
 
     
     // Start is called before the first frame update
@@ -36,6 +39,19 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        try
+        {
+            dataManager = GameObject.Find("DataManager").GetComponent<DataManager>();
+            RecordText.text = $"Best Score : {dataManager.darNombreRecord()} : {dataManager.darPuntajeRecord()}";
+        }
+        catch
+        {
+            RecordText.text = "Best Score : : 0";
+        }
+
+
+
     }
 
     private void Update()
@@ -55,6 +71,19 @@ public class MainManager : MonoBehaviour
         }
         else if (m_GameOver)
         {
+            try
+            {
+                if (m_Points > dataManager.darPuntajeRecord())
+                {
+                    dataManager.guardarRecord(m_Points);
+                    RecordText.text = $"Best Score : {dataManager.darNombreRecord()} : {dataManager.darPuntajeRecord()}";
+                }
+            }
+            catch
+            {
+
+            }
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
